@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AgriConnect - Home</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>🌾 AgriConnect</h2>
+
+    <div>
+
+        <a href="/home">Home</a>
+
+        <a href="/products">Products</a>
+
+        <a href="/add-product">Sell / Rent</a>
+
+        <a href="/profile">Profile</a>
+
+        <a href="/logout">Logout</a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <h1>Welcome, {{ name }} 👨‍🌾</h1>
+
+    <p>
+        Find agricultural equipment and farming products easily.
+    </p>
+
+
+    <div class="categories">
+
+        <a href="/products?category=Tractor"
+           class="category">
+            🚜
+            <h3>Tractors</h3>
+            <p>Buy or Rent</p>
+        </a>
+
+
+        <a href="/products?category=Implement"
+           class="category">
+            🔧
+            <h3>Implements</h3>
+            <p>Farm Equipment</p>
+        </a>
+
+
+        <a href="/products?category=Fertilizer"
+           class="category">
+            🧪
+            <h3>Fertilizers</h3>
+            <p>Farming Inputs</p>
+        </a>
+
+
+        <a href="/products?category=Seed"
+           class="category">
+            🌱
+            <h3>Seeds</h3>
+            <p>Quality Seeds</p>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

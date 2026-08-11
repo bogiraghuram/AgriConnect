@@ -1,0 +1,327 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+```html
+{% if search %}
+
+    <h2>🔎 Online Results for "{{ search }}"</h2>
+
+    {% if online_results %}
+
+        {% for result in online_results %}
+
+            <div class="online-card">
+
+                <h2>
+                    {{ result.title }}
+                </h2>
+
+                <p>
+                    {{ result.content }}
+                </p>
+
+                <a
+                    href="{{ result.url }}"
+                    target="_blank"
+                >
+                    🌐 Open Website
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No online results found.
+        </p>
+
+    {% endif %}
+
+{% endif %}
+```
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Tractor Details - AgriConnect</title>
+<form method="GET" action="/products">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search tractors, implements, fertilizers..."
+    >
+
+    <button type="submit">
+        🔍 Search
+    </button>
+
+</form>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🚜 Tractor Details</h1>
+
+        <div class="product-card">
+
+            <h2>Mahindra 575 DI</h2>
+
+            <p>
+                <strong>Brand:</strong>
+                Mahindra
+            </p>
+
+            <p>
+                <strong>Model:</strong>
+                575 DI
+            </p>
+
+            <p>
+                <strong>Engine Power:</strong>
+                47 HP
+            </p>
+
+            <p>
+                <strong>Price:</strong>
+                ₹7,50,000
+            </p>
+
+            <p>
+                <strong>Rental Price:</strong>
+                ₹1,500 / day
+            </p>
+
+            <p>
+                <strong>Suitable For:</strong>
+                Paddy, Cotton, Maize
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                Powerful tractor suitable for
+                agricultural and farming activities.
+            </p>
+
+            <p>
+                <strong>Location:</strong>
+                Sathupally
+            </p>
+
+            <hr>
+
+            <h3>Seller Details</h3>
+
+            <p>
+                <strong>Seller:</strong>
+                ABC Tractors
+            </p>
+
+            <p>
+                <strong>Phone:</strong>
+                9876543210
+            </p>
+
+            <button>
+                Contact Seller
+            </button>
+
+            <button>
+                Rent Tractor
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+```
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Tractors - AgriConnect</title>
+<form method="GET" action="/products">
+
+</form>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🚜 Tractors</h1>
+
+    <!-- TRACTOR 1 -->
+
+    <div class="product-card">
+
+        <h2>Mahindra 575 DI</h2>
+
+        <p><strong>Brand:</strong> Mahindra</p>
+
+        <p><strong>Model:</strong> 575 DI</p>
+
+        <p><strong>Engine Power:</strong> 47 HP</p>
+
+        <p><strong>Price:</strong> ₹7,50,000</p>
+
+        <p><strong>Rent:</strong> ₹1,500 / day</p>
+
+        <p><strong>Suitable For:</strong>
+            Paddy, Cotton, Maize
+        </p>
+
+        <p><strong>Location:</strong>
+            Sathupally
+        </p>
+
+        <button>View Details</button>
+
+    </div>
+
+
+    <!-- TRACTOR 2 -->
+
+    <div class="product-card">
+
+        <h2>John Deere 5310</h2>
+
+        <p><strong>Brand:</strong> John Deere</p>
+
+        <p><strong>Model:</strong> 5310</p>
+
+        <p><strong>Engine Power:</strong> 55 HP</p>
+
+        <p><strong>Price:</strong> ₹9,20,000</p>
+
+        <p><strong>Rent:</strong> ₹1,800 / day</p>
+
+        <p><strong>Suitable For:</strong>
+            Paddy, Cotton, Sugarcane
+        </p>
+
+        <p><strong>Location:</strong>
+            Sathupally
+        </p>
+
+        <button>View Details</button>
+
+    </div>
+
+
+    <!-- TRACTOR 3 -->
+
+    <div class="product-card">
+
+        <h2>Swaraj 744 FE</h2>
+
+        <p><strong>Brand:</strong> Swaraj</p>
+
+        <p><strong>Model:</strong> 744 FE</p>
+
+        <p><strong>Engine Power:</strong> 48 HP</p>
+
+        <p><strong>Price:</strong> ₹7,80,000</p>
+
+        <p><strong>Rent:</strong> ₹1,600 / day</p>
+
+        <p><strong>Suitable For:</strong>
+            Paddy, Cotton, Maize
+        </p>
+
+        <p><strong>Location:</strong>
+            Sathupally
+        </p>
+
+        <button>View Details</button>
+
+    </div>
+
+
+    <!-- TRACTOR 4 -->
+
+    <div class="product-card">
+
+        <h2>New Holland 3630 TX</h2>
+
+        <p><strong>Brand:</strong> New Holland</p>
+
+        <p><strong>Model:</strong> 3630 TX</p>
+
+        <p><strong>Engine Power:</strong> 50 HP</p>
+
+        <p><strong>Price:</strong> ₹8,50,000</p>
+
+        <p><strong>Rent:</strong> ₹1,700 / day</p>
+
+        <p><strong>Suitable For:</strong>
+            Paddy, Wheat, Cotton
+        </p>
+
+        <p><strong>Location:</strong>
+            Sathupally
+        </p>
+
+        <button>View Details</button>
+
+    </div>
+
+
+    <!-- TRACTOR 5 -->
+
+    <div class="product-card">
+
+        <h2>Sonalika DI 745 III</h2>
+
+        <p><strong>Brand:</strong> Sonalika</p>
+
+        <p><strong>Model:</strong> DI 745 III</p>
+
+        <p><strong>Engine Power:</strong> 50 HP</p>
+
+        <p><strong>Price:</strong> ₹7,40,000</p>
+
+        <p><strong>Rent:</strong> ₹1,500 / day</p>
+
+        <p><strong>Suitable For:</strong>
+            Paddy, Maize, Cotton
+        </p>
+
+        <p><strong>Location:</strong>
+            Sathupally
+        </p>
+
+        <button>View Details</button>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
+```
