@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tractors - AgriConnect</title>
+</head>
+
+<body>
+
+<h1>🚜 Tractor Information</h1>
+
+{% for tractor in tractors %}
+
+<div>
+    <h2>{{ tractor.name }}</h2>
+
+    <p>Power: {{ tractor.hp }}</p>
+
+    <p>Price: {{ tractor.price }}</p>
+
+    <hr>
+</div>
+
+{% endfor %}
+
+</body>
+</html>

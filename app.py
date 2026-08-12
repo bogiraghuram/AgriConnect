@@ -1,15 +1,23 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from tavily import TavilyClient
-"sk-tinyfish-mR4a7hrA6TRq3el_vKea_QSh6JYoqzUi"
 import os
+
+# ---------------- APP ----------------
+
+app = Flask(__name__)
+
+app.secret_key = "agriconnect-secret-key"
+
+
+# ---------------- TAVILY ----------------
+
 tavily_client = TavilyClient(
     api_key=os.environ.get("TAVILY_API_KEY")
 )
 
 
 def online_search(query):
-
     results = tavily_client.search(
         query=query,
         search_depth="basic",
@@ -17,9 +25,6 @@ def online_search(query):
     )
 
     return results["results"]
-app = Flask(__name__)
-
-app.secret_key = "agriconnect-secret-key"
 
 
 # ---------------- DATABASE ----------------
@@ -34,7 +39,8 @@ def create_database():
 
     conn = get_db()
 
-    # Users table
+    # ---------------- USERS TABLE ----------------
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,7 +51,8 @@ def create_database():
         )
     """)
 
-    # Products table
+    # ---------------- PRODUCTS TABLE ----------------
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,7 +65,8 @@ def create_database():
         )
     """)
 
-    # Default user
+    # ---------------- DEFAULT USER ----------------
+
     user = conn.execute(
         "SELECT * FROM users WHERE username = ?",
         ("farmer",)
@@ -72,8 +80,156 @@ def create_database():
             (name, username, password, village)
             VALUES (?, ?, ?, ?)
             """,
-            ("Farmer", "farmer", "1234", "My Village")
+            (
+                "Farmer",
+                "farmer",
+                "1234",
+                "My Village"
+            )
         )
+
+    # ---------------- DEFAULT AGRICULTURAL PRODUCTS ----------------
+
+    products = [
+        # TRACTORS
+        (
+            "Mahindra 575 DI",
+            "Tractor",
+            "Mahindra",
+            750000,
+            "45 HP",
+            "Sathupally"
+        ),
+
+        (
+            "John Deere 5310",
+            "Tractor",
+            "John Deere",
+            950000,
+            "55 HP",
+            "Sathupally"
+        ),
+
+        (
+            "Swaraj 744 FE",
+            "Tractor",
+            "Swaraj",
+            800000,
+            "48 HP",
+            "Sathupally"
+        ),
+
+        # IMPLEMENTS
+        (
+            "Rotavator",
+            "Implement",
+            "Shaktiman",
+            120000,
+            "Agricultural Implement",
+            "Sathupally"
+        ),
+
+        (
+            "Cultivator",
+            "Implement",
+            "Mahindra",
+            45000,
+            "Agricultural Implement",
+            "Sathupally"
+        ),
+
+        (
+            "Disc Plough",
+            "Implement",
+            "Fieldking",
+            65000,
+            "Agricultural Implement",
+            "Sathupally"
+        ),
+
+        # FERTILIZERS
+        (
+            "Urea",
+            "Fertilizer",
+            "IFFCO",
+            300,
+            "Nitrogen Fertilizer",
+            "Sathupally"
+        ),
+
+        (
+            "DAP",
+            "Fertilizer",
+            "IFFCO",
+            1350,
+            "Phosphorus Fertilizer",
+            "Sathupally"
+        ),
+
+        (
+            "MOP",
+            "Fertilizer",
+            "Coromandel",
+            1700,
+            "Potassium Fertilizer",
+            "Sathupally"
+        ),
+
+        # SEEDS
+        (
+            "Paddy Seeds",
+            "Seed",
+            "Kaveri",
+            500,
+            "Rice Seeds",
+            "Sathupally"
+        ),
+
+        (
+            "Maize Seeds",
+            "Seed",
+            "Pioneer",
+            700,
+            "Maize Seeds",
+            "Sathupally"
+        ),
+
+        (
+            "Cotton Seeds",
+            "Seed",
+            "Rasi",
+            800,
+            "Cotton Seeds",
+            "Sathupally"
+        )
+    ]
+
+    # ---------------- INSERT DEFAULT PRODUCTS ----------------
+
+    for product in products:
+
+        exists = conn.execute(
+            """
+            SELECT id
+            FROM products
+            WHERE name = ? AND category = ?
+            """,
+            (
+                product[0],
+                product[1]
+            )
+        ).fetchone()
+
+        if exists is None:
+
+            conn.execute(
+                """
+                INSERT INTO products
+                (name, category, brand, price, type, location)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                product
+            )
 
     conn.commit()
     conn.close()
@@ -93,10 +249,14 @@ def login():
 
         user = conn.execute(
             """
-            SELECT * FROM users
+            SELECT *
+            FROM users
             WHERE username = ? AND password = ?
             """,
-            (username, password)
+            (
+                username,
+                password
+            )
         ).fetchone()
 
         conn.close()
@@ -133,16 +293,47 @@ def home():
 
 # ---------------- PRODUCTS ----------------
 
-    
 @app.route("/products")
 def products():
 
     if "user_id" not in session:
         return redirect("/")
 
-    search = request.args.get("search", "").strip()
+    search = request.args.get(
+        "search",
+        ""
+    ).strip()
+
+    category = request.args.get(
+        "category",
+        ""
+    ).strip()
 
     online_results = []
+
+    conn = get_db()
+
+    if category:
+
+        products = conn.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE category = ?
+            """,
+            (category,)
+        ).fetchall()
+
+    else:
+
+        products = conn.execute(
+            """
+            SELECT *
+            FROM products
+            """
+        ).fetchall()
+
+    conn.close()
 
     if search:
 
@@ -152,21 +343,26 @@ def products():
 
         except Exception as e:
 
-            print("Online search error:", e)
+            print(
+                "Online search error:",
+                e
+            )
 
     return render_template(
         "products.html",
-        products=[],
+        products=products,
         search=search,
-    online_results=online_results
+        category=category,
+        online_results=online_results
     )
-
-
 
 
 # ---------------- ADD PRODUCT ----------------
 
-@app.route("/add-product", methods=["GET", "POST"])
+@app.route(
+    "/add-product",
+    methods=["GET", "POST"]
+)
 def add_product():
 
     if "user_id" not in session:
@@ -204,7 +400,9 @@ def add_product():
 
         return redirect("/products")
 
-    return render_template("add_product.html")
+    return render_template(
+        "add_product.html"
+    )
 
 
 # ---------------- PROFILE ----------------
@@ -218,8 +416,14 @@ def profile():
     conn = get_db()
 
     user = conn.execute(
-        "SELECT * FROM users WHERE id = ?",
-        (session["user_id"],)
+        """
+        SELECT *
+        FROM users
+        WHERE id = ?
+        """,
+        (
+            session["user_id"],
+        )
     ).fetchone()
 
     conn.close()
@@ -238,6 +442,130 @@ def logout():
     session.clear()
 
     return redirect("/")
+
+
+# ---------------- TRACTORS ----------------
+
+@app.route("/tractors")
+def tractors():
+
+    tractors = [
+        {
+            "name": "Mahindra 575 DI",
+            "hp": "45 HP",
+            "price": "₹7,50,000"
+        },
+
+        {
+            "name": "John Deere 5310",
+            "hp": "55 HP",
+            "price": "₹9,50,000"
+        },
+
+        {
+            "name": "Swaraj 744 FE",
+            "hp": "48 HP",
+            "price": "₹8,00,000"
+        }
+    ]
+
+    return render_template(
+        "tractors.html",
+        tractors=tractors
+    )
+
+
+# ---------------- IMPLEMENTS ----------------
+
+@app.route("/implements")
+def implements():
+
+    implements = [
+        {
+            "name": "Rotavator",
+            "type": "Tillage Equipment",
+            "price": "₹1,20,000"
+        },
+
+        {
+            "name": "Cultivator",
+            "type": "Tillage Equipment",
+            "price": "₹45,000"
+        },
+
+        {
+            "name": "Disc Plough",
+            "type": "Tillage Equipment",
+            "price": "₹65,000"
+        }
+    ]
+
+    return render_template(
+        "implements.html",
+        implements=implements
+    )
+
+
+# ---------------- FERTILIZERS ----------------
+
+@app.route("/fertilizers")
+def fertilizers():
+
+    fertilizers = [
+        {
+            "name": "Urea",
+            "type": "Nitrogen",
+            "price": "₹300"
+        },
+
+        {
+            "name": "DAP",
+            "type": "Phosphorus",
+            "price": "₹1,350"
+        },
+
+        {
+            "name": "MOP",
+            "type": "Potassium",
+            "price": "₹1,700"
+        }
+    ]
+
+    return render_template(
+        "fertilizers.html",
+        fertilizers=fertilizers
+    )
+
+
+# ---------------- SEEDS ----------------
+
+@app.route("/seeds")
+def seeds():
+
+    seeds = [
+        {
+            "name": "Paddy Seeds",
+            "crop": "Rice",
+            "price": "₹500"
+        },
+
+        {
+            "name": "Maize Seeds",
+            "crop": "Maize",
+            "price": "₹700"
+        },
+
+        {
+            "name": "Cotton Seeds",
+            "crop": "Cotton",
+            "price": "₹800"
+        }
+    ]
+
+    return render_template(
+        "seeds.html",
+        seeds=seeds
+    )
 
 
 # ---------------- START APP ----------------

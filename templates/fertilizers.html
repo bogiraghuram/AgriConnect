@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fertilizers - AgriConnect</title>
+</head>
+
+<body>
+
+<h1>🌱 Fertilizer Information</h1>
+
+{% for fertilizer in fertilizers %}
+
+<div>
+    <h2>{{ fertilizer.name }}</h2>
+
+    <p>Type: {{ fertilizer.type }}</p>
+
+    <p>Price: {{ fertilizer.price }}</p>
+
+    <hr>
+</div>
+
+{% endfor %}
+
+</body>
+</html>

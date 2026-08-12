@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seeds - AgriConnect</title>
+</head>
+
+<body>
+
+<h1>🌾 Seed Information</h1>
+
+{% for seed in seeds %}
+
+<div>
+    <h2>{{ seed.name }}</h2>
+
+    <p>Crop: {{ seed.crop }}</p>
+
+    <p>Price: {{ seed.price }}</p>
+
+    <hr>
+</div>
+
+{% endfor %}
+
+</body>
+</html>
