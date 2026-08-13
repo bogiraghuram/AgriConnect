@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Product - AgriConnect</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f4;
+        }
+
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #1b5e20;
+        }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <h1>AgriConnect</h1>
+
+    <p>Add Agricultural Product</p>
+
+</div>
+
+
+<div class="container">
+
+    <h2>➕ Add Product</h2>
+
+
+    <form
+        action="/add-product"
+        method="POST"
+    >
+
+
+        <!-- PRODUCT NAME -->
+
+        <div class="form-group">
+
+            <label>Product Name</label>
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Example: Mahindra 575 DI"
+                required
+            >
+
+        </div>
+
+
+        <!-- CATEGORY -->
+
+        <div class="form-group">
+
+            <label>Category</label>
+
+            <select
+                name="category"
+                required
+            >
+
+                <option value="">
+                    Select Category
+                </option>
+
+                <option value="Tractor">
+                    Tractor
+                </option>
+
+                <option value="Implement">
+                    Implement
+                </option>
+
+                <option value="Fertilizer">
+                    Fertilizer
+                </option>
+
+                <option value="Seed">
+                    Seed
+                </option>
+
+                <option value="Pesticide">
+                    Pesticide
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- BRAND -->
+
+        <div class="form-group">
+
+            <label>Brand</label>
+
+            <input
+                type="text"
+                name="brand"
+                placeholder="Example: Mahindra"
+            >
+
+        </div>
+
+
+        <!-- PRICE -->
+
+        <div class="form-group">
+
+            <label>Price (₹)</label>
+
+            <input
+                type="number"
+                name="price"
+                min="0"
+                step="0.01"
+                placeholder="Enter price"
+                required
+            >
+
+        </div>
+
+
+        <!-- TYPE -->
+
+        <div class="form-group">
+
+            <label>Product Type / Details</label>
+
+            <input
+                type="text"
+                name="type"
+                placeholder="Example: 45 HP"
+                required
+            >
+
+        </div>
+
+
+        <!-- LOCATION -->
+
+        <div class="form-group">
+
+            <label>Location</label>
+
+            <input
+                type="text"
+                name="location"
+                placeholder="Example: Sathupally"
+                required
+            >
+
+        </div>
+
+
+        <!-- SUBMIT -->
+
+        <button
+            type="submit"
+            class="submit-btn"
+        >
+            💾 Add Product
+        </button>
+
+
+    </form>
+
+
+    <a
+        href="/products"
+        class="back-btn"
+    >
+        ← Back to Products
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>

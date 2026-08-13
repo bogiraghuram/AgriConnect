@@ -1,56 +1,687 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
-    <title>My Profile</title>
+    <meta charset="UTF-8">
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Profile - AgriConnect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f4;
+            color: #333;
+        }
+
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+        }
+
+        .profile-card {
+            width: 90%;
+            max-width: 750px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+        }
+
+        .profile-photo {
+            width: 110px;
+            height: 110px;
+            background: #dcedc8;
+            border-radius: 50%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+
+        .name {
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .location {
+            text-align: center;
+            color: #666;
+            margin-top: 5px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .section h3 {
+            color: #2e7d32;
+            border-bottom: 2px solid #dcedc8;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: #1b5e20;
+        }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<nav>
 
-    <h2>🌾 AgriConnect</h2>
+<div class="header">
 
-    <div>
+    <h1>AgriConnect</h1>
 
-        <a href="/home">Home</a>
+    <p>Farmer Profile</p>
 
-        <a href="/products">Products</a>
+</div>
 
-        <a href="/add-product">Sell / Rent</a>
 
-        <a href="/logout">Logout</a>
+<div class="profile-card">
+
+
+    <!-- PROFILE PHOTO -->
+
+    <div class="profile-photo">
+        👨‍🌾
+    </div>
+
+
+    <!-- PROFILE NAME -->
+
+    <div class="name">
+        {{ user["name"] or "Farmer Name" }}
+    </div>
+
+
+    <div class="location">
+
+        📍 {{ user["village"] or "Village Not Added" }}
 
     </div>
 
-</nav>
+
+    <form
+        action="/update-profile"
+        method="POST"
+    >
 
 
-<div class="profile">
+        <!-- ========================================= -->
+        <!-- PERSONAL INFORMATION -->
+        <!-- ========================================= -->
 
-    <h1>👨‍🌾 My Profile</h1>
+        <div class="section">
 
-    <p>
-        <strong>Name:</strong>
-        {{ user["name"] }}
-    </p>
+            <h3>👤 Personal Information</h3>
 
-    <p>
-        <strong>Username:</strong>
-        {{ user["username"] }}
-    </p>
 
-    <p>
-        <strong>Village:</strong>
-        {{ user["village"] }}
-    </p>
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ user['name'] or '' }}"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Username</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ user['username'] or '' }}"
+                    placeholder="Enter username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Mobile Number</label>
+
+                <input
+                    type="tel"
+                    name="phone"
+                    value="{{ user['phone'] or '' }}"
+                    placeholder="Enter mobile number"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ user['email'] or '' }}"
+                    placeholder="Enter email address"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Date of Birth</label>
+
+                <input
+                    type="date"
+                    name="date_of_birth"
+                    value="{{ user['date_of_birth'] or '' }}"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Gender</label>
+
+                <select name="gender">
+
+                    <option value="">
+                        Select Gender
+                    </option>
+
+                    <option
+                        value="Male"
+                        {% if user['gender'] == 'Male' %}
+                        selected
+                        {% endif %}
+                    >
+                        Male
+                    </option>
+
+                    <option
+                        value="Female"
+                        {% if user['gender'] == 'Female' %}
+                        selected
+                        {% endif %}
+                    >
+                        Female
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if user['gender'] == 'Other' %}
+                        selected
+                        {% endif %}
+                    >
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ADDRESS DETAILS -->
+        <!-- ========================================= -->
+
+        <div class="section">
+
+            <h3>📍 Address Details</h3>
+
+
+            <div class="form-group">
+
+                <label>Village</label>
+
+                <input
+                    type="text"
+                    name="village"
+                    value="{{ user['village'] or '' }}"
+                    placeholder="Enter village"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Mandal</label>
+
+                <input
+                    type="text"
+                    name="mandal"
+                    value="{{ user['mandal'] or '' }}"
+                    placeholder="Enter mandal"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>District</label>
+
+                <input
+                    type="text"
+                    name="district"
+                    value="{{ user['district'] or '' }}"
+                    placeholder="Enter district"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>State</label>
+
+                <input
+                    type="text"
+                    name="state"
+                    value="{{ user['state'] or '' }}"
+                    placeholder="Enter state"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>PIN Code</label>
+
+                <input
+                    type="text"
+                    name="pincode"
+                    value="{{ user['pincode'] or '' }}"
+                    placeholder="Enter PIN code"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- FARMING DETAILS -->
+        <!-- ========================================= -->
+
+        <div class="section">
+
+            <h3>🌾 Farming Details</h3>
+
+
+            <div class="form-group">
+
+                <label>Total Land Area</label>
+
+                <input
+                    type="text"
+                    name="land_area"
+                    value="{{ user['land_area'] or '' }}"
+                    placeholder="Example: 5 acres"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Main Crops</label>
+
+                <input
+                    type="text"
+                    name="main_crops"
+                    value="{{ user['main_crops'] or '' }}"
+                    placeholder="Example: Paddy, Cotton, Maize"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Current Season Crop</label>
+
+                <input
+                    type="text"
+                    name="current_season_crop"
+                    value="{{ user['current_season_crop'] or '' }}"
+                    placeholder="Enter current crop"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Land Type</label>
+
+                <select name="land_type">
+
+                    <option value="">
+                        Select Land Type
+                    </option>
+
+                    <option
+                        value="Wet Land"
+                        {% if user['land_type'] == 'Wet Land' %}
+                        selected
+                        {% endif %}
+                    >
+                        Wet Land
+                    </option>
+
+                    <option
+                        value="Dry Land"
+                        {% if user['land_type'] == 'Dry Land' %}
+                        selected
+                        {% endif %}
+                    >
+                        Dry Land
+                    </option>
+
+                    <option
+                        value="Mixed"
+                        {% if user['land_type'] == 'Mixed' %}
+                        selected
+                        {% endif %}
+                    >
+                        Mixed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Irrigation Type</label>
+
+                <select name="irrigation_type">
+
+                    <option value="">
+                        Select Irrigation Type
+                    </option>
+
+                    <option
+                        value="Borewell"
+                        {% if user['irrigation_type'] == 'Borewell' %}
+                        selected
+                        {% endif %}
+                    >
+                        Borewell
+                    </option>
+
+                    <option
+                        value="Canal"
+                        {% if user['irrigation_type'] == 'Canal' %}
+                        selected
+                        {% endif %}
+                    >
+                        Canal
+                    </option>
+
+                    <option
+                        value="Rainfed"
+                        {% if user['irrigation_type'] == 'Rainfed' %}
+                        selected
+                        {% endif %}
+                    >
+                        Rainfed
+                    </option>
+
+                    <option
+                        value="Drip Irrigation"
+                        {% if user['irrigation_type'] == 'Drip Irrigation' %}
+                        selected
+                        {% endif %}
+                    >
+                        Drip Irrigation
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if user['irrigation_type'] == 'Other' %}
+                        selected
+                        {% endif %}
+                    >
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Soil Type</label>
+
+                <select name="soil_type">
+
+                    <option value="">
+                        Select Soil Type
+                    </option>
+
+                    <option
+                        value="Black Soil"
+                        {% if user['soil_type'] == 'Black Soil' %}
+                        selected
+                        {% endif %}
+                    >
+                        Black Soil
+                    </option>
+
+                    <option
+                        value="Red Soil"
+                        {% if user['soil_type'] == 'Red Soil' %}
+                        selected
+                        {% endif %}
+                    >
+                        Red Soil
+                    </option>
+
+                    <option
+                        value="Alluvial Soil"
+                        {% if user['soil_type'] == 'Alluvial Soil' %}
+                        selected
+                        {% endif %}
+                    >
+                        Alluvial Soil
+                    </option>
+
+                    <option
+                        value="Sandy Soil"
+                        {% if user['soil_type'] == 'Sandy Soil' %}
+                        selected
+                        {% endif %}
+                    >
+                        Sandy Soil
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if user['soil_type'] == 'Other' %}
+                        selected
+                        {% endif %}
+                    >
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Farming Experience</label>
+
+                <input
+                    type="text"
+                    name="farming_experience"
+                    value="{{ user['farming_experience'] or '' }}"
+                    placeholder="Example: 10 years"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Land Ownership</label>
+
+                <select name="land_ownership">
+
+                    <option value="">
+                        Select Ownership
+                    </option>
+
+                    <option
+                        value="Own Land"
+                        {% if user['land_ownership'] == 'Own Land' %}
+                        selected
+                        {% endif %}
+                    >
+                        Own Land
+                    </option>
+
+                    <option
+                        value="Leased Land"
+                        {% if user['land_ownership'] == 'Leased Land' %}
+                        selected
+                        {% endif %}
+                    >
+                        Leased Land
+                    </option>
+
+                    <option
+                        value="Both"
+                        {% if user['land_ownership'] == 'Both' %}
+                        selected
+                        {% endif %}
+                    >
+                        Both
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- SAVE BUTTON -->
+
+        <button
+            type="submit"
+            class="save-btn"
+        >
+            💾 Save Profile
+        </button>
+
+
+    </form>
+
+
+    <a
+        href="/home"
+        class="back-btn"
+    >
+        ← Back to Home
+    </a>
+
 
 </div>
+
 
 </body>
 

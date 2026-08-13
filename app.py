@@ -3,14 +3,21 @@ import sqlite3
 from tavily import TavilyClient
 import os
 
-# ---------------- APP ----------------
+# ==================================================
+# APP
+# ==================================================
 
 app = Flask(__name__)
 
-app.secret_key = "agriconnect-secret-key"
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "agriconnect-secret-key"
+)
 
 
-# ---------------- TAVILY ----------------
+# ==================================================
+# TAVILY
+# ==================================================
 
 tavily_client = TavilyClient(
     api_key=os.environ.get("TAVILY_API_KEY")
@@ -18,6 +25,7 @@ tavily_client = TavilyClient(
 
 
 def online_search(query):
+
     results = tavily_client.search(
         query=query,
         search_depth="basic",
@@ -27,31 +35,46 @@ def online_search(query):
     return results["results"]
 
 
-# ---------------- DATABASE ----------------
+# ==================================================
+# DATABASE CONNECTION
+# ==================================================
 
 def get_db():
+
     conn = sqlite3.connect("agriconnect.db")
+
     conn.row_factory = sqlite3.Row
+
     return conn
 
+
+# ==================================================
+# CREATE DATABASE
+# ==================================================
 
 def create_database():
 
     conn = get_db()
 
-    # ---------------- USERS TABLE ----------------
+    # --------------------------------------------------
+    # USERS TABLE
+    # --------------------------------------------------
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            username TEXT NOT NULL UNIQUE,
+            username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            village TEXT
+            village TEXT,
+            phone TEXT,
+            email TEXT
         )
     """)
 
-    # ---------------- PRODUCTS TABLE ----------------
+    # --------------------------------------------------
+    # PRODUCTS TABLE
+    # --------------------------------------------------
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS products (
@@ -65,10 +88,16 @@ def create_database():
         )
     """)
 
-    # ---------------- DEFAULT USER ----------------
+    # --------------------------------------------------
+    # DEFAULT USER
+    # --------------------------------------------------
 
     user = conn.execute(
-        "SELECT * FROM users WHERE username = ?",
+        """
+        SELECT *
+        FROM users
+        WHERE username = ?
+        """,
         ("farmer",)
     ).fetchone()
 
@@ -77,21 +106,34 @@ def create_database():
         conn.execute(
             """
             INSERT INTO users
-            (name, username, password, village)
-            VALUES (?, ?, ?, ?)
+            (
+                name,
+                username,
+                password,
+                village,
+                phone,
+                email
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
             (
                 "Farmer",
                 "farmer",
                 "1234",
-                "My Village"
+                "Sathupally",
+                "",
+                ""
             )
         )
 
-    # ---------------- DEFAULT AGRICULTURAL PRODUCTS ----------------
+    # --------------------------------------------------
+    # DEFAULT PRODUCTS
+    # --------------------------------------------------
 
     products = [
+
         # TRACTORS
+
         (
             "Mahindra 575 DI",
             "Tractor",
@@ -120,6 +162,7 @@ def create_database():
         ),
 
         # IMPLEMENTS
+
         (
             "Rotavator",
             "Implement",
@@ -148,6 +191,7 @@ def create_database():
         ),
 
         # FERTILIZERS
+
         (
             "Urea",
             "Fertilizer",
@@ -176,6 +220,7 @@ def create_database():
         ),
 
         # SEEDS
+
         (
             "Paddy Seeds",
             "Seed",
@@ -204,7 +249,9 @@ def create_database():
         )
     ]
 
-    # ---------------- INSERT DEFAULT PRODUCTS ----------------
+    # --------------------------------------------------
+    # INSERT PRODUCTS
+    # --------------------------------------------------
 
     for product in products:
 
@@ -212,7 +259,8 @@ def create_database():
             """
             SELECT id
             FROM products
-            WHERE name = ? AND category = ?
+            WHERE name = ?
+            AND category = ?
             """,
             (
                 product[0],
@@ -225,17 +273,27 @@ def create_database():
             conn.execute(
                 """
                 INSERT INTO products
-                (name, category, brand, price, type, location)
+                (
+                    name,
+                    category,
+                    brand,
+                    price,
+                    type,
+                    location
+                )
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 product
             )
 
     conn.commit()
+
     conn.close()
 
 
-# ---------------- LOGIN ----------------
+# ==================================================
+# LOGIN
+# ==================================================
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -251,7 +309,8 @@ def login():
             """
             SELECT *
             FROM users
-            WHERE username = ? AND password = ?
+            WHERE username = ?
+            AND password = ?
             """,
             (
                 username,
@@ -277,7 +336,9 @@ def login():
     return render_template("login.html")
 
 
-# ---------------- HOME ----------------
+# ==================================================
+# HOME
+# ==================================================
 
 @app.route("/home")
 def home():
@@ -291,7 +352,9 @@ def home():
     )
 
 
-# ---------------- PRODUCTS ----------------
+# ==================================================
+# PRODUCTS
+# ==================================================
 
 @app.route("/products")
 def products():
@@ -335,6 +398,8 @@ def products():
 
     conn.close()
 
+    # ONLINE SEARCH
+
     if search:
 
         try:
@@ -357,7 +422,9 @@ def products():
     )
 
 
-# ---------------- ADD PRODUCT ----------------
+# ==================================================
+# ADD PRODUCT
+# ==================================================
 
 @app.route(
     "/add-product",
@@ -382,7 +449,14 @@ def add_product():
         conn.execute(
             """
             INSERT INTO products
-            (name, category, brand, price, type, location)
+            (
+                name,
+                category,
+                brand,
+                price,
+                type,
+                location
+            )
             VALUES (?, ?, ?, ?, ?, ?)
             """,
             (
@@ -396,6 +470,7 @@ def add_product():
         )
 
         conn.commit()
+
         conn.close()
 
         return redirect("/products")
@@ -405,7 +480,9 @@ def add_product():
     )
 
 
-# ---------------- PROFILE ----------------
+# ==================================================
+# PROFILE
+# ==================================================
 
 @app.route("/profile")
 def profile():
@@ -434,7 +511,72 @@ def profile():
     )
 
 
-# ---------------- LOGOUT ----------------
+# ==================================================
+# UPDATE PROFILE
+# ==================================================
+
+@app.route(
+    "/update-profile",
+    methods=["POST"]
+)
+def update_profile():
+
+    if "user_id" not in session:
+        return redirect("/")
+
+    name = request.form["name"]
+    username = request.form["username"]
+    village = request.form["village"]
+    phone = request.form["phone"]
+    email = request.form["email"]
+
+    conn = get_db()
+
+    try:
+
+        conn.execute(
+            """
+            UPDATE users
+            SET
+                name = ?,
+                username = ?,
+                village = ?,
+                phone = ?,
+                email = ?
+            WHERE id = ?
+            """,
+            (
+                name,
+                username,
+                village,
+                phone,
+                email,
+                session["user_id"]
+            )
+        )
+
+        conn.commit()
+
+        session["name"] = name
+        session["username"] = username
+
+    except sqlite3.IntegrityError:
+
+        conn.close()
+
+        return render_template(
+            "profile.html",
+            error="Username already exists"
+        )
+
+    conn.close()
+
+    return redirect("/profile")
+
+
+# ==================================================
+# LOGOUT
+# ==================================================
 
 @app.route("/logout")
 def logout():
@@ -444,12 +586,15 @@ def logout():
     return redirect("/")
 
 
-# ---------------- TRACTORS ----------------
+# ==================================================
+# TRACTORS
+# ==================================================
 
 @app.route("/tractors")
 def tractors():
 
     tractors = [
+
         {
             "name": "Mahindra 575 DI",
             "hp": "45 HP",
@@ -475,12 +620,15 @@ def tractors():
     )
 
 
-# ---------------- IMPLEMENTS ----------------
+# ==================================================
+# IMPLEMENTS
+# ==================================================
 
 @app.route("/implements")
 def implements():
 
     implements = [
+
         {
             "name": "Rotavator",
             "type": "Tillage Equipment",
@@ -506,12 +654,15 @@ def implements():
     )
 
 
-# ---------------- FERTILIZERS ----------------
+# ==================================================
+# FERTILIZERS
+# ==================================================
 
 @app.route("/fertilizers")
 def fertilizers():
 
     fertilizers = [
+
         {
             "name": "Urea",
             "type": "Nitrogen",
@@ -537,12 +688,15 @@ def fertilizers():
     )
 
 
-# ---------------- SEEDS ----------------
+# ==================================================
+# SEEDS
+# ==================================================
 
 @app.route("/seeds")
 def seeds():
 
     seeds = [
+
         {
             "name": "Paddy Seeds",
             "crop": "Rice",
@@ -568,10 +722,15 @@ def seeds():
     )
 
 
-# ---------------- START APP ----------------
+# ==================================================
+# START APPLICATION
+# ==================================================
+
+create_database()
+
 
 if __name__ == "__main__":
 
-    create_database()
-
-    app.run(debug=True)
+    app.run(
+        debug=True
+    )
