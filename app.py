@@ -118,8 +118,8 @@ def create_database():
             """,
             (
                 "Farmer",
-                "farmer",
-                "1234",
+                "raghuram",
+                "9392",
                 "Sathupally",
                 "",
                 ""
